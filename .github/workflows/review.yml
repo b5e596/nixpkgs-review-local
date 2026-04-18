@@ -49,7 +49,11 @@ jobs:
 
       - name: Run nixpkgs-review
         run: |
-          nixpkgs-review rev HEAD --package ${{ inputs.package }} --no-shell --print-result
+          nixpkgs-review rev HEAD \
+            --package ${{ inputs.package }} \
+            --no-shell \
+            --print-result \
+            --build-args="-L"
 
       - name: Upload report
         uses: actions/upload-artifact@v7
