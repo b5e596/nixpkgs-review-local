@@ -32,6 +32,12 @@ jobs:
           ref: ${{ inputs.branch }}
           fetch-depth: 0
 
+      - name: Get revision
+        id: rev
+        run: |
+          set -euo pipefail
+          echo "rev=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
       - name: Install Nix
         uses: cachix/install-nix-action@v31.10.4
         with:
@@ -44,3 +50,9 @@ jobs:
       - name: Run nixpkgs-review
         run: |
           nixpkgs-review rev HEAD --package ${{ inputs.package }} --no-shell --print-result
+
+      - name: Upload report
+        uses: actions/upload-artifact@v7
+        with:
+          archive: false
+          path: ~/.cache/nixpkgs-review/rev-${{ steps.rev.outputs.rev }}/report.md
