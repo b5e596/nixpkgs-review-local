@@ -17,6 +17,10 @@ on:
         description: Start an Upterm session right before running nixpkgs-review
         type: boolean
         default: false
+      upterm_immediate:
+        description: Start an Upterm session immediately
+        type: boolean
+        default: false
 
 jobs:
   review:
@@ -29,6 +33,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Start Upterm
+        if: inputs.upterm_immediate == true
+        uses: owenthereal/action-upterm@v1
+
       - name: Checkout nixpkgs
         uses: actions/checkout@v6
         with:
@@ -54,7 +62,7 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-unstable
           extra_nix_config: |
-            sandbox = relaxed
+            sandbox = false
 
       - name: Install tools
         run: |
@@ -63,8 +71,6 @@ jobs:
       - name: Start upterm
         if: inputs.upterm == true
         uses: owenthereal/action-upterm@v1
-        with:
-          limit-access-to-actor: true
 
       - name: Run nixpkgs-review
         run: |
